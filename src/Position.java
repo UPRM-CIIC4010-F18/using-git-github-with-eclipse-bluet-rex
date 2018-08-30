@@ -1,83 +1,103 @@
-
-public class Position {
-	private String positionCode; //Position Code
-	private int reqRank;//Rank required to be here
-	private double hSalary;//Position Salary
-	private boolean available;//Position Availability
-	private boolean jobType; //Full Time [True] Part Time [False];
+public class JobHandler {
 	
-	public Position(String pCode, int rank, double salary, boolean availability, boolean jobType) {
-		setPositionCode(pCode);
-		setRank(rank);
-		setSalary(salary);
-		setAvailability(availability);
-		setJobType(jobType);
-	}
-
-	public String getPositionCode() {
-		return positionCode;
-	}
-
-	public void setPositionCode(String positionCode) {
-		this.positionCode = positionCode;
-	}
-
-	public int getRank() {
-		return reqRank;
-	}
-
-	public void setRank(int reqRank) {
-		this.reqRank = reqRank;
-	}
-
-	public double getSalary() {
-		return hSalary;
-	}
-
-	public void setSalary(double hSalary) {
-		this.hSalary = hSalary;
-	}
-
-	public boolean isAvailable() {
-		return available;
-	}
-
-	public void setAvailability(boolean available) {
-		this.available = available;
-	}
-
-	public boolean getJobType() {
-		return jobType;
-	}
-
-	public void setJobType(boolean jobType) {
-		this.jobType = jobType;
+	/**
+	 * A method that returns the rank of an employee.
+	 * A rank is determined by the user's current salary
+	 * and the number of warnings received:
+	 * 1. According to the salary the following are the determined ranks:
+	 * 		a) If the salary is less than 10,000 the rank is 20
+	 * 		b) If the salary is less than 50,000 the rank is 40
+	 * 		c) If the salary is less than 100,000 the rank is 60
+	 * 		d) More or equal than 100,000 the rank is 80
+	 * 2. Warnings determine a penalty on the awarded rank,
+	 * 	  the penalties are the following:
+	 * 		a) If the employee has no warnings the rank is not decreased 
+	 * 		b) If the employee has 1 warning the rank is decreased by 5
+	 * 		c) If the employee has 2 warnings the rank is decreased by 10
+	 * 		d) If the employee has 3 warnings the rank is decreased by 15 
+	 * 		e) If the warnings are more than 3 the decrease is determined 
+	 * 		   by the next equation: totalDecrease = warnings*6
+	 * @param person 
+	 * @return (currentRank - warningDeRank)
+	 */
+	public static int rank(int warningTotals, double yearlySalary) {
+		int currentRank = 0;
+		int warningDeRank = 0;
+		
+		//Add Code Here [You have to use Switch and If/Else to get graded] 
+		if (yearlySalary < 10000)
+			currentRank = 20;
+		else if (yearlySalary < 50000)
+			currentRank = 40;
+		else if (yearlySalary < 100000)
+			currentRank = 60;
+		else if (yearlySalary >= 100000)
+			currentRank = 80;
+			
+		switch(warningTotals) {	
+		case 1 :
+			warningDeRank = 5;
+		break;
+			case 2 :
+			warningDeRank = 10;
+		break;	
+		case 3 :
+			warningDeRank = 15;
+		break;	
+		default:
+			warningDeRank = warningTotals *6;
+		break;
+		
+		
+		}
+		
+		return currentRank - warningDeRank;
 	}
 	
 	/**
-	 * A method that calculates an average yearly salary.
-	 * 1. The calculation depends what type of job it is:
-	 * 		a) If the position is part time 20 hours is determined.
-	 * 		b) If the position is full time 40 hours is determined.
-	 * 
-	 * Hint: Given an hourly salary to calculate a yearly salary we 
-	 * use the following formula: 
-	 * 		totalYearly = payPerHour*Hours*4.5*monthsAYear.
-	 * @return 
+	 * A method that helps determine if an employee qualifies for a job.
+	 * To determine if the employee qualifies we need to meet the following requirements:
+	 * 1. The job must me available
+	 * 2. The employee's rank must be higher than 0
+	 * 3. To know if an employee qualify,
+	 *    simply check if the employee rank is higher or equal to the job's rank
+	 * 		a) If the user has a seniority of 1, the user gains a 5 rank bonus
+	 * 		b) If the user has a seniority of 2, the user gains a 10 rank bonus
+	 * 		c) If the user has a seniority of 3, the user gains a 20 rank bonus
+	 * 		b) Otherwise there is no bonus.
+	 * 4. If the employee doesn't meet requirement 3, if the position is temporal 
+	 *    they can still qualify for the position.
+	 * @param job
+	 * @param person
+	 * @return
 	 */
-	public double getYearlySalary() {
+	public static boolean promotionQualify(boolean availability, boolean jobType, int jobRank, int eRank, int seniority) {
+		boolean qualify = false;
+		if(!availability){ return qualify;}
+		if(eRank <= 0) { return qualify;}
 		
-		 if (jobType){
-             return 40*hSalary*4.5*12;
- }
-         
-         
-         else{
-             return 20*hSalary*4.5*12;
-         }
+		switch(seniority) {
+		case 1:
+			eRank = eRank + 5;
+			break;
+		case 2:
+			eRank = eRank + 10;
+			break;
+		case 3:
+			eRank = eRank + 20;
+			break;
+			default:
+				eRank = eRank;
+				
+				break;
+		}
+		if (eRank >= jobRank || !jobType)
+			qualify = true;
 		
+		
+		
+		return qualify; 
 	}
-	
 }
 
 
